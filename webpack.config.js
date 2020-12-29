@@ -1,13 +1,11 @@
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-var webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
+const path = require('path')
 
 module.exports = {
+  mode: 'development',
   entry: {
-    server: [
-      `webpack-dev-server/client?http://localhost:3000`,
-      'webpack/hot/dev-server'
-    ],
-    app: [__dirname + '/src/app.js'],
+    app: [path.resolve(__dirname, 'src', 'app.js')],
     vendor: [
       'jquery',
       'riot',
@@ -17,42 +15,35 @@ module.exports = {
       'json-patch-utils'
     ]
   },
-  devtool: '#source-map',
-  filename: __filename,
   stats: {
-    colors: true,
-    modules: true,
-    reasons: true,
-    errorDetails: true
+    colors: true
   },
   output: {
     filename: '[name].js',
-    path: `${__dirname}/build`,
-    pathinfo: true,
+    path: path.resolve(__dirname, 'build'),
+    pathinfo: true
+  },
+  devtool: 'eval',
+  devServer: {
+    contentBase: path.resolve(__dirname, 'build'),
+    historyApiFallback: true,
+    inline: true,
+    hot: true,
+    stats: 'minimal',
+    port: '3000',
+    host: '0.0.0.0',
     publicPath: '/'
   },
-  devServer: {
-    contentBase: __dirname + '/build',
-    historyApiFallback: true,
-    hot: true,
-    inline: true,
-    progress: true,
-    stats: 'errors-only',
-    port: '3000',
-    host: 'localhost'
-  },
   resolve: {
-    root: [
-      __dirname + '/src'
-    ],
-    modulesDirectories: [
-      'node_modules'
+    modules: [
+      path.join(__dirname, 'src'),
+        'node_modules'
     ],
     alias: {
-      lib: __dirname + '/lib',
-      schema: __dirname + '/src/schema'
+      lib: path.resolve(__dirname, 'lib'),
+      schema: path.resolve(__dirname, 'src/schema')
     },
-    extensions: ['', '.js', '.yaml', '.tag']
+    extensions: ['.js', '.yaml', '.tag']
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -60,15 +51,13 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
-        inject: false,
-        template: __dirname + '/index.ejs',
-        mobile: true,
-        baseHref: 'localhost',
-        appMountId: 'app',
-        devServer: 'http://localhost:3000',
-        title: 'The JSON Architecture TodoMVC demo',
-        hash: true
-      })
+      inject: false,
+      mobile: true,
+      template: path.resolve(__dirname, 'index.ejs'),
+      appMountId: 'app',
+      title: 'The JSON Architecture TodoMVC Demo',
+      hash: true
+    })
   ],
   module: {
     noParse: [
@@ -79,15 +68,30 @@ module.exports = {
       /^ramda$/,
       /^json-patch-utils$/
     ],
-    preLoaders: [
-      { test: /\.yml|\.yaml$/, exclude: /node_modules/, loader: 'json-loader!yaml-loader' }
-    ],
-    loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel' ,
-        query: { presets: ['es2015'] }
+    rules: [
+      { test: /\.ya?ml$/, exclude: /node_modules/,
+        enforce: 'pre', type: 'json', use: 'yaml-loader'
       },
-      { test: /\.js|\.tag$/, exclude: /node_modules/, loader: 'ramda-loader?debug=true' },
-      { test: /\.tag$/, exclude: /node_modules/, loader: 'tag' }
+      { test: /\.js$/, exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      },
+      { test: /\.js|\.tag$/, exclude: /node_modules/,
+        use: {
+          loader: 'ramda-loader',
+          query: '?debug'
+        }
+      },
+      { test: /\.tag$/, exclude: /node_modules/,
+        use: {
+          loader: '@riotjs/webpack-loader',
+          options: { hot: true }
+        }
+      }
     ]
   }
 }

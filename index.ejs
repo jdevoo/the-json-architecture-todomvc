@@ -4,6 +4,7 @@
 <!--[if IE 8 ]>    <html lang="en" class="ie8" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
 <!--[if IE 9 ]>    <html lang="en" class="ie9" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="" <% if(htmlWebpackPlugin.files.manifest) { %> manifest="<%= htmlWebpackPlugin.files.manifest %>"<% } %>> <!--<![endif]-->
+
 <head>
   <meta charset="utf-8">
   <title><%= htmlWebpackPlugin.options.title || 'Webpack App'%></title>
@@ -33,11 +34,12 @@
   <% } %>
 
 </head>
+
 <body>
 <% if (htmlWebpackPlugin.options.unsupportedBrowser) { %>
 <style>.unsupported-browser { display: none; }</style>
 <div class="unsupported-browser">
-  Sorry, your browser is not supported.  Please upgrade to
+  Sorry, your browser is not supported. Please upgrade to
   the latest version or switch your browser to use this site.
   See <a href="http://outdatedbrowser.com/">outdatedbrowser.com</a>
   for options.
@@ -62,9 +64,8 @@
 </script>
 <% } %>
 
-
-<% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-<script src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+<% for (var chunk in htmlWebpackPlugin.files.js) { %>
+<script src="<%= htmlWebpackPlugin.files.js[chunk] %>"></script>
 <% } %>
 
 <% if (htmlWebpackPlugin.options.devServer) { %>
@@ -89,8 +90,7 @@
 </script>
 <% } %>
 
-    <script type="text/javascript" src="https://rawgit.com/tastejs/todomvc-common/master/base.js"></script>
-
-
+<script type="text/javascript" src="https://rawgit.com/tastejs/todomvc-common/master/base.js"></script>
 </body>
+
 </html>

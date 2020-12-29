@@ -1,8 +1,9 @@
 # the-json-architecture-todomvc
-To install run in your terminal:
 
-``` git clone git@github.com:dumconstantin/the-json-architecture-todomvc.git && cd the-json-architecture-todomvc && npm install && npm start ```
+To install, run in your terminal:
 
-And check http://localhost:3000
+`npm install && npm start`
 
-Tested on npm 3+ and node 4+.
+and go to http://localhost:3000
+
+Tested on npm 6+ and node v12+.

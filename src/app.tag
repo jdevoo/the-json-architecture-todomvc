@@ -11,7 +11,7 @@
         placeholder="What needs to be done?"
         value="{ data.newTodo }"
         autofocus
-      />
+      >
     </header>
 
     <section if={ data.allNo > 0 } class="main">
@@ -21,33 +21,37 @@
         class="toggle-all"
         type="checkbox"
         checked={ data.activeNo === 0 }
-      />
+      >
       <label for="toggle-all">Mark all as complete</label>
 
       <ul class="todo-list">
 
         <li
-          each={ data.todos }
+          each={ todo in data.todos }
           data-path="{ schema.todos.edit.path }"
-          data-value="{ id }"
-          class="{ editing: data.editing === id }  { completed: completed }"
+          data-value="{ todo.id }"
+          class={ todo.editing ? 'editing' : (todo.completed ? 'completed' : '') }
         >
           <div class="view">
             <input
               data-path="{ schema.todos.toggle.path }"
-              data-value="{ id }"
+              data-value="{ todo.id }"
               class="toggle"
               type="checkbox"
-              checked={ completed }
-            />
-            <label>{ title }</label>
+              checked={ todo.completed }
+            >
+            <label>{ todo.title }</label>
             <button
               class="destroy"
               data-path="{ schema.todos.destroy.path }"
-              data-value="{ id }"
+              data-value="{ todo.id }"
             ></button>
           </div>
-          <input class="edit" data-path="{ schema.todos.newTitle.path }" value="{ title }">
+          <input
+            class="edit"
+            data-path="{ schema.todos.newTitle.path }"
+            value="{ todo.title }"
+          >
         </li>
 
       </ul>
@@ -56,12 +60,14 @@
 
     <footer if={ data.allNo > 0 } class="footer">
 
-      <span class="todo-count"><strong>{ data.activeNo }</strong> item left</span>
+      <span class="todo-count">
+        <strong>{ data.activeNo }</strong> item left
+      </span>
 
       <ul class="filters">
         <li>
           <a
-            class="{ selected: data.filter === 'all' }"
+            class={ data.filter === 'all' ? 'selected' : '' }
             href="#/"
             data-path="{ schema.todos.filter.path }"
             data-value="all"
@@ -69,7 +75,7 @@
         </li>
         <li>
           <a
-            class="{ selected: data.filter === 'active' }"
+            class={ data.filter === 'active' ? 'selected' : '' }
             href="#/active"
             data-path="{ schema.todos.filter.path }"
             data-value="active"
@@ -77,7 +83,7 @@
         </li>
         <li>
           <a
-            class="{ selected: data.filter === 'completed' }"
+            class={ data.filter === 'completed' ? 'selected' : '' }
             href="#/completed"
             data-path="{ schema.todos.filter.path }"
             data-value="completed"
@@ -95,18 +101,23 @@
 
   </section>
 
-  this.schema = require('./../lib/uiSchema.js').default
-  let state  = require('./../lib/state.js').default
-
-  state.data(this, {
-    newTodo: '/ui/todos/data/newTodo/value',
-    editing: '/todos/editing/id',
-    allNo: ['/todos/all', length],
-    activeNo: ['/todos/active', length],
-    completedNo: ['/todos/completed', length],
-    todos: '/ui/todos/filtered',
-    filter: '/ui/todos/data/filter/value',
-    toggleAll: '/ui/todos/data/toggleAll/value'
-  })
+  <script>
+    export default {
+      onBeforeMount() {
+        this.schema = require('../lib/uiSchema.js').default
+        let state = require('../lib/state.js').default
+        state.data(this, {
+          newTodo: '/ui/todos/data/newTodo/value',
+          editing: '/todos/editing/id',
+          allNo: ['/todos/all', length],
+          activeNo: ['/todos/active', length],
+          completedNo: ['/todos/completed', length],
+          todos: '/ui/todos/filtered',
+          filter: '/ui/todos/data/filter/value',
+          toggleAll: '/ui/todos/data/toggleAll/value'
+        })
+      }
+    }
+  </script>
 
 </app>

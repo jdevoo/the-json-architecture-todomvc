@@ -4,6 +4,7 @@ import { newTodo, destroy, toggle, toggleValue, toggleAll, edit, editValue, newT
 import { on, get, default as state } from 'lib/state'
 import uiPatches from 'lib/uiPatches'
 import randomId from 'lib/randomId'
+import App from './app.tag'
 
 const patches = Kefir.merge([
   on(newTodo)
@@ -46,5 +47,4 @@ const patches = Kefir.merge([
 patches.onValue(state.patch)
 uiPatches.onValue(state.patch)
 
-require('./app.tag')
-riot.mount('#app', 'app')
+riot.component(App)(document.getElementById('app'))
